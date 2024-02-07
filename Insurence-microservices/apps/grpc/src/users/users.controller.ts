@@ -11,7 +11,7 @@ export class UsersController implements UserService {
   }
 
   async FindOne(request: FindUserDto): Promise<User> {
-    return await this.usersService.findOne(request.id);
+    return await this.usersService.findOne(request);
   }
 
   async FindAll(request: Empty): Promise<Users> {

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as _m0 from "protobufjs/minimal";
 
-export const protobufPackage = "user";
+export const userProtobufPackage = "user";
 
 export interface Empty {
 }
@@ -19,7 +19,8 @@ export interface User {
 }
 
 export interface FindUserDto {
-  id: string;
+  id?: string | undefined;
+  username?: string | undefined;
 }
 
 export interface Users {
@@ -248,13 +249,16 @@ export const User = {
 };
 
 function createBaseFindUserDto(): FindUserDto {
-  return { id: "" };
+  return { id: undefined, username: undefined };
 }
 
 export const FindUserDto = {
   encode(message: FindUserDto, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
+    if (message.id !== undefined) {
       writer.uint32(10).string(message.id);
+    }
+    if (message.username !== undefined) {
+      writer.uint32(18).string(message.username);
     }
     return writer;
   },
@@ -273,6 +277,13 @@ export const FindUserDto = {
 
           message.id = reader.string();
           continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.username = reader.string();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -283,13 +294,19 @@ export const FindUserDto = {
   },
 
   fromJSON(object: any): FindUserDto {
-    return { id: isSet(object.id) ? globalThis.String(object.id) : "" };
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : undefined,
+      username: isSet(object.username) ? globalThis.String(object.username) : undefined,
+    };
   },
 
   toJSON(message: FindUserDto): unknown {
     const obj: any = {};
-    if (message.id !== "") {
+    if (message.id !== undefined) {
       obj.id = message.id;
+    }
+    if (message.username !== undefined) {
+      obj.username = message.username;
     }
     return obj;
   },
@@ -299,7 +316,8 @@ export const FindUserDto = {
   },
   fromPartial<I extends Exact<DeepPartial<FindUserDto>, I>>(object: I): FindUserDto {
     const message = createBaseFindUserDto();
-    message.id = object.id ?? "";
+    message.id = object.id ?? undefined;
+    message.username = object.username ?? undefined;
     return message;
   },
 };
@@ -369,7 +387,7 @@ export interface UserService {
   FindAll(request: Empty): Promise<Users>;
 }
 
-export const UserServiceServiceName = "user.UserService";
+export const UserServiceServiceName = "UserService";
 export class UserServiceClientImpl implements UserService {
   private readonly rpc: Rpc;
   private readonly service: string;

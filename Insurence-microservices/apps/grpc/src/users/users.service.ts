@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { CreateUserDto, User, Users } from '@app/common';
+import { CreateUserDto, FindUserDto, User, Users } from '@app/common';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -24,8 +24,10 @@ export class UsersService implements OnModuleInit {
     return user;
   }
 
-  async findOne(id: string): Promise<User> {
-    return this.users.find((user) => user.id === id);
+  async findOne(findDto: FindUserDto): Promise<User> {
+    return this.users.find((user) => findDto.id 
+                            ? user.id === findDto.id 
+                            : user.username === findDto.username)
   }
 
   async findAll(): Promise<Users> {

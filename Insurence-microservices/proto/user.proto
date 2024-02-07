@@ -25,7 +25,8 @@ message User {
 }
 
 message FindUserDto {
-  string id = 1;
+  optional string id = 1;
+  optional string username = 2;
 }
 
 message Users {

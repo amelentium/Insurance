@@ -1,10 +1,27 @@
 services:
-  microservices:
-    build: Insurence-microservices/
-    depends_on:
-      - postgres
+  gateway:
+    container_name: gateway
+    build:
+      context: ./Insurence-microservices
+      dockerfile: Dockerfile-gateway
     env_file:
       - .env
+    ports:
+      - 3001:3000
+    depends_on:
+      - grpc
+
+  grpc:
+    container_name: grpc
+    build:
+      context: ./Insurence-microservices
+      dockerfile: Dockerfile-grpc
+    env_file:
+      - .env
+    ports:
+      - 3002:3000
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:latest
