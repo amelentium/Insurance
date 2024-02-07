@@ -3,4 +3,4 @@ grpc_tools_node_protoc \
   --js_out=import_style=commonjs,binary:./generated \
   --grpc_out=./generated \
   --ts_out=./generated \
-  -I=src/ src/**/*.proto
+  -I=proto/ *.proto

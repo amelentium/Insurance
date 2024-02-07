@@ -1,13 +1,6 @@
 services:
-  geteway:
-    build: insurance-claims-gateway/
-    depends_on:
-      - grpc
-    env_file:
-      - .env
-  
-  grpc:
-    build: insurance-claims-grpc/
+  microservices:
+    build: Insurence-microservices/
     depends_on:
       - postgres
     env_file:
@@ -20,4 +13,4 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5435:5432"

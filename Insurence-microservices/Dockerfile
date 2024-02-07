@@ -2,7 +2,7 @@
 FROM node:lts-alpine
 
 # Create app directory
-WORKDIR /usr/src/insurance-grpc
+WORKDIR /usr/src/insurance-microservices
 
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY --chown=node:node package*.json ./
