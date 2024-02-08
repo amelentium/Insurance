@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { grpcModule } from './grpc.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import { protoPath, userProto, userProtobufPackage } from '@app/common';
+import { protoPath, usersProto, USER_PACKAGE_NAME } from '@app/common';
 import { ServerCredentials } from '@grpc/grpc-js';
 
 async function bootstrap() {
@@ -16,8 +16,8 @@ async function bootstrap() {
       transport: Transport.GRPC,
       options: {
           url: address,
-          protoPath: join(__dirname, protoPath, userProto),
-          package: userProtobufPackage,
+          protoPath: join(__dirname, protoPath, usersProto),
+          package: USER_PACKAGE_NAME,
           credentials: ServerCredentials.createInsecure(),
       }
     });

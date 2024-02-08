@@ -1,3 +1,3 @@
-export const USER_SERVICE = 'user';
+export const USERS_SERVICE = 'users';
 export const protoPath = '../../../libs/common';
-export const userProto = 'user.proto';
+export const usersProto = 'users.proto';

@@ -1,71 +1,57 @@
-import { CreateUserDto, FindUserDto, USER_SERVICE, User, UserServiceClientImpl, UserServiceServiceName, Users } from '@app/common';
-import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { FindUserDto, USERS_SERVICE, User, USER_SERVICE_NAME, Users, UsersServiceClient } from '@app/common';
+import { ConflictException, Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { UserLoginRequest, UserLoginResponse } from './dto/UserLogin';
+import { UserLoginRequest } from './dto/UserLogin';
+import { firstValueFrom, toArray, Observable } from 'rxjs';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
-  private userService: UserServiceClientImpl
+  private UsersService: UsersServiceClient
 
-  constructor(@Inject(USER_SERVICE) private client: ClientGrpc) {}
+  constructor(@Inject(USERS_SERVICE) private client: ClientGrpc) {}
 
   onModuleInit() {
-    this.userService = this.client.getService<UserServiceClientImpl>(UserServiceServiceName)
+    this.UsersService = this.client.getService<UsersServiceClient>(USER_SERVICE_NAME)
   }
 
-  async registry(loginDto: UserLoginRequest): Promise<UserLoginResponse> {
-    const findDto: FindUserDto = { username: loginDto.username };
-
-    let user = await this.userService.FindOne(findDto);
+  async create(loginDto: UserLoginRequest): Promise<User> {
+    const user = await this.findOne({ username: loginDto.username });
     if (user) {
       throw new ConflictException(`User already exist with same username ${loginDto.username}.`);
     }
 
-    const createDto: CreateUserDto = { ...loginDto };
-
-    user = await this.userService.Create(createDto);
-    if (user) {
-      const response: UserLoginResponse = {
-        user: user,
-        jwtToken: 'userJwtToken',
-      }
-
-      return response;
-    }
-
-    throw new InternalServerErrorException('Something went wrong. Please try again later.');
+    const observable = this.UsersService.create({ ...loginDto });
+    const result = await firstValueFrom(observable);
+    return result.user;
   }
 
-  async login(loginDto: UserLoginRequest): Promise<UserLoginResponse> {
-    const findDto: FindUserDto = { username: loginDto.username };
-    const user = await this.userService.FindOne(findDto);
-    if (user) {
-      const response: UserLoginResponse = {
-        user: user,
-        jwtToken: 'userJwtToken',
-      }
-
-      return response;
-    }
-
-    throw new NotFoundException(`User not found by username ${loginDto.username}`);
+  findAll(): Observable<Users> {
+    return this.UsersService.findAll({});
   }
 
-  async findAll(): Promise<Users> {
-    return await this.userService.FindAll({});
-  }
-
-  async findOne(id: string): Promise<User> {
-    const findDto: FindUserDto = { id: id };
-    return await this.userService.FindOne(findDto);
+  async findOne(findDto: FindUserDto): Promise<User> {
+    const observable = this.UsersService.findOne(findDto);
+    const result = await firstValueFrom(observable);
+    return result.user;
   }
 
   async update(updateUserDto: User): Promise<User> {
-    return await this.userService.Update(updateUserDto);
+    const observable = this.UsersService.update(updateUserDto);
+    const result = await firstValueFrom(observable);
+    if (result.user) {
+      return result.user;
+    }
+
+    throw new NotFoundException(`User not found by id ${updateUserDto.id}`);
   }
 
   async remove(id: string): Promise<User> {
-    const findDto: FindUserDto = { id: id };
-    return await this.userService.Remove(findDto);
+    const observable = this.UsersService.remove({ id: id });
+    const result = await firstValueFrom(observable);
+    if (result.user) {
+      return result.user;
+    }
+
+    throw new NotFoundException(`User not found by id ${id}`);
   }
 }

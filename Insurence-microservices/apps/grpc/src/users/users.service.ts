@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { CreateUserDto, FindUserDto, User, Users } from '@app/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { CreateUserDto, FindUserDto, User } from '@app/common';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -29,8 +29,8 @@ export class UsersService implements OnModuleInit {
                                   || (user.username === findDto.username));
   }
 
-  async findAll(): Promise<Users> {
-    return { users: this.users };
+  async findAll(): Promise<User[]> {
+    return this.users;
   }
 
   async update(updateDto: User): Promise<User> {
@@ -47,6 +47,6 @@ export class UsersService implements OnModuleInit {
   async remove(id: string): Promise<User> {
     const userIndex = this.users.findIndex((user) => user.id === id);
     
-    return this.users.splice(userIndex)[0];    
+    return this.users.splice(userIndex)[0];
   }
 }

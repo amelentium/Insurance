@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } 
 import { UsersService } from './users.service';
 import { User, Users } from '@app/common';
 import { UserLoginRequest, UserLoginResponse } from './dto/UserLogin';
+import { Observable } from 'rxjs';
 
 
 @Controller('users')
@@ -10,22 +11,38 @@ export class UsersController {
 
   @Post('registry')
   async registry(@Body() loginDto: UserLoginRequest): Promise<UserLoginResponse> {
-    return await this.usersService.registry(loginDto);
+    const user = await this.usersService.create(loginDto);
+    if (user) {
+      return {
+        user: user,
+        jwtToken: 'userJwtToken',
+      };
+    }
   }
 
   @Post('login')
   async login(@Body() loginDto: UserLoginRequest): Promise<UserLoginResponse> {
-    return await this.usersService.login(loginDto);
+    const user = await this.usersService.findOne({ username: loginDto.username });
+    if (user) {
+      const response: UserLoginResponse = {
+        user: user,
+        jwtToken: 'userJwtToken',
+      }
+
+      return response;
+    }
+
+    throw new NotFoundException(`User not found by username ${loginDto.username}`);
   }
 
   @Get()
-  async findAll(): Promise<Users> {
-    return await this.usersService.findAll();
+  findAll(): Observable<Users> {
+    return this.usersService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
-    const user = await this.usersService.findOne(id);
+    const user = await this.usersService.findOne({ id: id });
     if (user) {
       return user;
     }

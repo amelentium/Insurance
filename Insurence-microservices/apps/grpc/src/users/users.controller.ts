@@ -1,34 +1,34 @@
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, Empty, FindUserDto, User, Users, UserService } from '@app/common';
-import { GrpcMethod } from '@nestjs/microservices';
+import { CreateUserDto, Empty, FindUserDto, User, UserResponse, Users, UsersServiceController, UsersServiceControllerMethods } from '@app/common';
 
 @Controller()
-export class UsersController implements UserService {
+@UsersServiceControllerMethods()
+export class UsersController implements UsersServiceController {
   constructor(private readonly usersService: UsersService) {}
 
-  @GrpcMethod('UserService', 'Create')
-  async Create(request: CreateUserDto): Promise<User> {
-    return await this.usersService.create(request);
+  async create(request: CreateUserDto): Promise<UserResponse> {
+    const user = await this.usersService.create(request);
+    return { user: user };
   }
 
-  @GrpcMethod('UserService', 'FindOne')
-  async FindOne(request: FindUserDto): Promise<User> {
-    return await this.usersService.findOne(request);
+  async findOne(request: FindUserDto): Promise<UserResponse> {
+    const user = await this.usersService.findOne(request);
+    return { user: user };
   }
 
-  @GrpcMethod('UserService', 'FindAll')
-  async FindAll(request: Empty): Promise<Users> {
-    return await this.usersService.findAll();
+  async findAll(request: Empty): Promise<Users> {
+    const users = await this.usersService.findAll();    
+    return { users: users };
   }
 
-  @GrpcMethod('UserService', 'Update')
-  async Update(request: User): Promise<User> {
-    return await this.usersService.update(request);
+  async update(request: User): Promise<UserResponse> {
+    const user = await this.usersService.update(request);    
+    return { user: user };
   }
 
-  @GrpcMethod('UserService', 'Remove')
-  async Remove(request: FindUserDto): Promise<User> {
-    return await this.usersService.remove(request.id);
+  async remove(request: FindUserDto): Promise<UserResponse> {
+    const user = await this.usersService.remove(request.id);    
+    return { user: user };
   }
 }
