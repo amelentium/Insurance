@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     ports:
-      - 3001:3000
+      - 3000:3000
     depends_on:
       - grpc
 
@@ -19,7 +19,7 @@ services:
     env_file:
       - .env
     ports:
-      - 3002:3000
+      - 5000:5000
     depends_on:
       - postgres
 
@@ -30,4 +30,4 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5435:5432"
+      - 5432:5432

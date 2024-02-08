@@ -25,9 +25,8 @@ export class UsersService implements OnModuleInit {
   }
 
   async findOne(findDto: FindUserDto): Promise<User> {
-    return this.users.find((user) => findDto.id 
-                            ? user.id === findDto.id 
-                            : user.username === findDto.username)
+    return this.users.find((user) => (findDto.id && user.id === findDto.id)
+                                  || (user.username === findDto.username));
   }
 
   async findAll(): Promise<Users> {
@@ -37,24 +36,17 @@ export class UsersService implements OnModuleInit {
   async update(updateDto: User): Promise<User> {
     const userIndex = this.users.findIndex((user) => user.id === updateDto.id);
 
-    if (userIndex !== -1) {
-      this.users[userIndex] = {
-        ...this.users[userIndex],
-        ...updateDto,
-      };
-      return this.users[userIndex];
-    }
+    this.users[userIndex] = {
+      ...this.users[userIndex],
+      ...updateDto,
+    };
 
-    throw new NotFoundException(`User not found by id ${updateDto.id}.`);
+    return this.users[userIndex];
   }
 
   async remove(id: string): Promise<User> {
     const userIndex = this.users.findIndex((user) => user.id === id);
-
-    if (userIndex !== -1) {
-      return this.users.splice(userIndex)[0];
-    }
-
-    throw new NotFoundException(`User not found by id ${id}.`);
+    
+    return this.users.splice(userIndex)[0];    
   }
 }

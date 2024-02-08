@@ -5,6 +5,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { USER_SERVICE, protoPath, userProto, userProtobufPackage } from '@app/common';
 import { join } from 'path';
 
+const HOST = process.env.GRPC_HOST || 'localhost';
+const PORT = Number(process.env.GRPC_PORT) || 5000;
+const address = `${HOST}:${PORT}`;
+
 @Module({
   imports: [
     ClientsModule.register([
@@ -12,6 +16,7 @@ import { join } from 'path';
         name: USER_SERVICE,
         transport: Transport.GRPC,
         options: {
+          url: address,
           protoPath: join(__dirname, protoPath, userProto),
           package: userProtobufPackage
         }
