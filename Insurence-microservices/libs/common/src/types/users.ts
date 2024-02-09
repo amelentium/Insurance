@@ -1,10 +1,15 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Empty } from "./shared";
 
-export const protobufPackage = "users";
+export const usersProtobufPackage = "users";
 
-export interface Empty {
+export interface User {
+  id: string;
+  username: string;
+  password: string;
+  isActive: boolean;
 }
 
 export interface CreateUserDto {
@@ -16,13 +21,6 @@ export interface UserResponse {
   user?: User | undefined;
 }
 
-export interface User {
-  id: string;
-  username: string;
-  password: string;
-  isActive: boolean;
-}
-
 export interface FindUserDto {
   id?: string | undefined;
   username?: string | undefined;
@@ -32,7 +30,7 @@ export interface Users {
   users: User[];
 }
 
-export const USER_PACKAGE_NAME = "users";
+export const USERS_PACKAGE_NAME = "users";
 
 export interface UsersServiceClient {
   create(request: CreateUserDto): Observable<UserResponse>;
@@ -73,4 +71,4 @@ export function UsersServiceControllerMethods() {
   };
 }
 
-export const USER_SERVICE_NAME = "UsersService";
+export const USERS_SERVICE_NAME = "UsersService";

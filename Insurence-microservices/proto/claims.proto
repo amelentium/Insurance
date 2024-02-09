@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+import "users.proto";
+import "google/protobuf/timestamp.proto";
+
+package claims;
+
+service ClaimsService {
+  rpc create (CreateClaimDto) returns (ClaimResponse) {}
+  rpc update (UpdateClaimDto) returns (ClaimResponse) {}
+  rpc remove (FindClaimDto) returns (ClaimResponse) {}
+  rpc findOne (FindClaimDto) returns (ClaimResponse) {}
+  rpc findAll (FindAllClaimsFilter) returns (Claims) {}
+  rpc findByUserId (FindAllClaimsFilter) returns (Claims) {}
+}
+
+message Claim {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  ClaimStatus status = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  users.User user = 6;
+}
+
+enum ClaimStatus {
+  OPENED = 0;
+  APPROVED = 1;
+  DENIED = 2;
+}
+
+message CreateClaimDto {
+  string name = 1;
+  string description = 2;
+  string userId = 3;
+}
+
+message UpdateClaimDto {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  ClaimStatus status = 4;
+}
+
+message ClaimResponse {
+  optional Claim claim = 1;
+}
+
+message FindClaimDto {
+  string id = 1;
+}
+
+message FindAllClaimsFilter {
+  optional string userId = 1;
+}
+
+message Claims {
+  repeated Claim claims = 1;
+}

@@ -1,34 +1,34 @@
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, Empty, FindUserDto, User, UserResponse, Users, UsersServiceController, UsersServiceControllerMethods } from '@app/common';
+import { CreateUserDto, FindUserDto, User, UserResponse, Users, UsersServiceController, UsersServiceControllerMethods } from '@app/common';
 
 @Controller()
 @UsersServiceControllerMethods()
 export class UsersController implements UsersServiceController {
   constructor(private readonly usersService: UsersService) {}
 
-  async create(request: CreateUserDto): Promise<UserResponse> {
-    const user = await this.usersService.create(request);
+  async create(createDto: CreateUserDto): Promise<UserResponse> {
+    const user = await this.usersService.create(createDto);
     return { user: user };
   }
 
-  async findOne(request: FindUserDto): Promise<UserResponse> {
-    const user = await this.usersService.findOne(request);
-    return { user: user };
-  }
-
-  async findAll(request: Empty): Promise<Users> {
-    const users = await this.usersService.findAll();    
+  async findAll(): Promise<Users> {
+    const users = await this.usersService.findAll();
     return { users: users };
   }
 
-  async update(request: User): Promise<UserResponse> {
-    const user = await this.usersService.update(request);    
+  async findOne(findDto: FindUserDto): Promise<UserResponse> {
+    const user = await this.usersService.findOne(findDto);
     return { user: user };
   }
 
-  async remove(request: FindUserDto): Promise<UserResponse> {
-    const user = await this.usersService.remove(request.id);    
+  async update(userDto: User): Promise<UserResponse> {
+    const user = await this.usersService.update(userDto);
+    return { user: user };
+  }
+
+  async remove(findDto: FindUserDto): Promise<UserResponse> {
+    const user = await this.usersService.remove(findDto.id);
     return { user: user };
   }
 }

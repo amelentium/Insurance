@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
+import { ClaimsService } from './claims.service';
+import { ClaimsController } from './claims.controller';
+import { CLAIMS_PACKAGE_NAME, claimsProto, protoPath } from '@app/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { USERS_PACKAGE_NAME, protoPath, usersProto } from '@app/common';
 import { join } from 'path';
 
 const HOST = process.env.GRPC_HOST || 'localhost';
@@ -13,17 +13,17 @@ const address = `${HOST}:${PORT}`;
   imports: [
     ClientsModule.register([
       {
-        name: USERS_PACKAGE_NAME,
+        name: CLAIMS_PACKAGE_NAME,
         transport: Transport.GRPC,
         options: {
           url: address,
-          protoPath: join(__dirname, protoPath, usersProto),
-          package: USERS_PACKAGE_NAME
+          protoPath: join(__dirname, protoPath, claimsProto),
+          package: CLAIMS_PACKAGE_NAME
         }
       }
     ])
   ],
-  controllers: [UsersController],
-  providers: [UsersService],
+  controllers: [ClaimsController],
+  providers: [ClaimsService],
 })
-export class UsersModule {}
+export class ClaimsModule {}

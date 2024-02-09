@@ -1,17 +1,17 @@
-import { FindUserDto, USERS_SERVICE, User, USER_SERVICE_NAME, Users, UsersServiceClient } from '@app/common';
+import { User, UsersServiceClient, USERS_PACKAGE_NAME, USERS_SERVICE_NAME, Users, FindUserDto } from '@app/common';
 import { ConflictException, Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { UserLoginRequest } from './dto/UserLogin';
-import { firstValueFrom, toArray, Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
   private UsersService: UsersServiceClient
 
-  constructor(@Inject(USERS_SERVICE) private client: ClientGrpc) {}
+  constructor(@Inject(USERS_PACKAGE_NAME) private client: ClientGrpc) {}
 
   onModuleInit() {
-    this.UsersService = this.client.getService<UsersServiceClient>(USER_SERVICE_NAME)
+    this.UsersService = this.client.getService<UsersServiceClient>(USERS_SERVICE_NAME)
   }
 
   async create(loginDto: UserLoginRequest): Promise<User> {
@@ -35,14 +35,14 @@ export class UsersService implements OnModuleInit {
     return result.user;
   }
 
-  async update(updateUserDto: User): Promise<User> {
-    const observable = this.UsersService.update(updateUserDto);
+  async update(updateDto: User): Promise<User> {
+    const observable = this.UsersService.update(updateDto);
     const result = await firstValueFrom(observable);
     if (result.user) {
       return result.user;
     }
 
-    throw new NotFoundException(`User not found by id ${updateUserDto.id}`);
+    throw new NotFoundException(`User not found by id ${updateDto.id}`);
   }
 
   async remove(id: string): Promise<User> {

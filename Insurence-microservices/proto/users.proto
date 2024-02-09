@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "shared.proto";
+
 package users;
 
 service UsersService {
@@ -7,10 +9,15 @@ service UsersService {
   rpc update (User) returns (UserResponse) {}
   rpc remove (FindUserDto) returns (UserResponse) {}
   rpc findOne (FindUserDto) returns (UserResponse) {}
-  rpc findAll (Empty) returns (Users) {}
+  rpc findAll (shared.Empty) returns (Users) {}
 }
 
-message Empty {}
+message User {
+  string id = 1;
+  string username = 2;
+  string password = 3;
+  bool isActive = 4;
+}
 
 message CreateUserDto {
   string username = 1;
@@ -19,13 +26,6 @@ message CreateUserDto {
 
 message UserResponse {
   optional User user = 1;
-}
-
-message User {
-  string id = 1;
-  string username = 2;
-  string password = 3;
-  bool isActive = 4;
 }
 
 message FindUserDto {

@@ -37,7 +37,7 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json",
         "assets": [
-          "proto/*.proto"
+          "proto/**/*.proto"
         ],
         "watchAssets": true
       }
