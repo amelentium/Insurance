@@ -1,11 +1,15 @@
-import { User } from "@app/common";
-
 export class UserLoginRequest {
   username: string;
   password: string;
 }
 
 export class UserLoginResponse {
-  user: User;
-  jwtToken: string;
+  user: UserDto;
+  token: string;
+}
+
+export interface UserDto {
+  id: string;
+  username: string;
+  isActive: boolean;
 }
