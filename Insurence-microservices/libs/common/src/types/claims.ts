@@ -1,7 +1,6 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
-import { Empty } from "./shared";
 import { Timestamp } from "./timestamp";
 import { User } from "./users";
 

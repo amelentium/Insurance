@@ -1,75 +1,88 @@
 import { Claim, CreateClaimDto, UpdateClaimDto, TimestampConverter, ClaimStatus, FindAllClaimsFilter} from '@app/common';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class ClaimsService implements OnModuleInit {
-  private readonly claims: Claim[] = [];
+export class ClaimsService {
+  constructor(private prisma: PrismaService) {}
 
-  onModuleInit() {
-    for(let i = 1; i <= 10; i++) {
-      this.create({
-        name: `TestClaim${i}`,
-        description: `TestPassword${i}`,
-        userId: randomUUID(),
+  async create(createDto: CreateClaimDto): Promise<Claim | undefined> {
+    try {
+      const claim: any = await this.prisma.claim.create({
+        data: {
+          name: createDto.name,
+          description: createDto.description,
+          userId: createDto.userId,
+        },
+        include: { user: true },
       });
+
+      return this.mapClaim(claim);
+    } catch {
+      return undefined;
     }
   }
 
-  async create(createDto: CreateClaimDto): Promise<Claim> {
-    const claim: Claim = {
-      ...createDto,
-      id: randomUUID(),
-      createdAt: TimestampConverter.newTimestamp(),
-      status: ClaimStatus.OPENED,
-      user: {
-        id: createDto.userId,
-        username: '',
-        password: '',
-        isActive: true
-      }
-    };
-
-    this.claims.push(claim);
-
-    return claim;
-  }
-
   async findAll(filter: FindAllClaimsFilter): Promise<Claim[]> {
-    return this.claims.filter(claim =>  {
-      let check = true;
-
-      if (filter.userId) {
-        check = claim.user.id === filter.userId;
-      }
-
-      return check;
-    });
+    try {
+      const claims = await this.prisma.claim.findMany({
+        where: { userId: filter.userId },
+        include: { user: true },
+      });
+      return claims.map(claim => this.mapClaim(claim));
+    } catch {
+      return undefined;
+    }
   }
 
-  async findByUserId(userId: string): Promise<Claim[]> {
-    return this.claims.filter((claim) => claim.user.id === userId);
-
+  async findOne(id: string): Promise<Claim | undefined> {
+    try {
+      const claim = await this.prisma.claim.findMany({
+        where: { id: id },
+        include: { user: true },
+      });
+      return this.mapClaim(claim);
+    } catch {
+      return undefined;
+    }
   }
 
-  async findOne(id: string): Promise<Claim> {
-    return this.claims.find((claim) => claim.id === id);
+  async update(updateDto: UpdateClaimDto): Promise<Claim | undefined> {
+    try {
+      const claim = await this.prisma.claim.update({
+        where: { id: updateDto.id },
+        data: { ...this.mapClaim(updateDto, false) },
+        include: { user: true },
+      });
+      return this.mapClaim(claim);
+    } catch (ex) {
+      return undefined;
+    }
   }
 
-  async update(updateDto: UpdateClaimDto): Promise<Claim> {
-    const claimIndex = this.claims.findIndex((claim) => claim.id === updateDto.id);
-
-    this.claims[claimIndex] = {
-      ...this.claims[claimIndex],
-      ...updateDto,
-    };
-
-    return this.claims[claimIndex];
+  async remove(id: string): Promise<Claim | undefined> {
+    try {
+      const claim = await this.prisma.claim.delete({
+        where: { id: id },
+        include: { user: true },
+      });
+      return this.mapClaim(claim);
+    } catch {
+      return undefined;
+    }
   }
 
-  async remove(id: string): Promise<Claim> {
-    const claimIndex = this.claims.findIndex((claim) => claim.id === id);
-    
-    return this.claims.splice(claimIndex)[0];
+  private mapClaim(claim: any, toClaim: boolean = true): Claim | any {
+    if (toClaim) {
+      claim.status = ClaimStatus[claim.status];
+      claim.createdAt = TimestampConverter.fromDate(claim.createdAt);
+      return claim as Claim;
+    } else {
+      if (claim.status)
+        claim.status = ClaimStatus[claim.status] as any;
+      if (claim.createdAt)
+        claim.createdAt = TimestampConverter.toDate(claim.createdAt);
+      return claim;
+    }
   }
 }
