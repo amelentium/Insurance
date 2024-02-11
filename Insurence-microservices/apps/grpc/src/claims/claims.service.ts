@@ -1,6 +1,6 @@
 import { Claim, CreateClaimDto, UpdateClaimDto, TimestampConverter, ClaimStatus, FindAllClaimsFilter} from '@app/common';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../../../prisma/prisma.service';
 
 @Injectable()
 export class ClaimsService {

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -12,7 +12,7 @@ const address = `${HOST}:${PORT}`;
 
 @Module({
   imports: [
-    AuthModule,
+    forwardRef(() => AuthModule),
     ClientsModule.register([
       {
         name: USERS_PACKAGE_NAME,
@@ -27,5 +27,6 @@ const address = `${HOST}:${PORT}`;
   ],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

@@ -6,7 +6,7 @@ export class ClaimDto {
   description: string;
   status: ClaimStatus;
   createdAt: Date;
-  user: User;
+  user?: ClaimUserDto;
 
   static fromClaim(claim: Claim): ClaimDto | undefined {
     return claim ? {
@@ -18,4 +18,10 @@ export class ClaimDto {
       user: claim.user,
     } : undefined;
   }
+}
+
+export interface ClaimUserDto {
+  id: string;
+  username: string;
+  isActive: boolean;
 }

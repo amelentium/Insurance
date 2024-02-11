@@ -1,7 +1,6 @@
 import { User, UsersServiceClient, USERS_PACKAGE_NAME, USERS_SERVICE_NAME, FindUserDto } from '@app/common';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { UserLoginRequest } from './dto/UserLogin';
 import { firstValueFrom, } from 'rxjs';
 import * as bcrypt from 'bcrypt';
 
@@ -15,7 +14,7 @@ export class UsersService implements OnModuleInit {
     this.UsersService = this.client.getService<UsersServiceClient>(USERS_SERVICE_NAME)
   }
 
-  async create(loginDto: UserLoginRequest): Promise<User | undefined> {
+  async create(loginDto: { username: string, password: string }): Promise<User | undefined> {
     const user = await this.findOne({ username: loginDto.username });
     if (user) {
       return undefined;
@@ -32,13 +31,13 @@ export class UsersService implements OnModuleInit {
     return result.user;
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(includeClaims: boolean = false): Promise<User[]> {
     const observable = this.UsersService.findAll({});
     const result = await firstValueFrom(observable);
     return result.users;
   }
 
-  async findOne(findDto: FindUserDto): Promise<User | undefined> {
+  async findOne(findDto: FindUserDto, includeClaims: boolean = false): Promise<User | undefined> {
     const observable = this.UsersService.findOne(findDto);
     const result = await firstValueFrom(observable);
     if (result.user) {
