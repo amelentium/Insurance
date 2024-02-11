@@ -4,6 +4,8 @@ services:
     build:
       context: ./Insurance-microservices/
       dockerfile: Dockerfile-gateway
+      args:
+        DATABASE_URL: ${DATABASE_URL}
     env_file:
       - .env
     ports:
@@ -14,7 +16,7 @@ services:
   grpc:
     container_name: grpc
     build:
-      context: ./Insurance-microservices
+      context: ./Insurance-microservices/
       dockerfile: Dockerfile-grpc
     env_file:
       - .env
