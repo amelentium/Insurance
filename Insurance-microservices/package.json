@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "init": "concurrently \"nest build common\" \"nest build gateway\" \"nest build grpc\" \"npx prisma generate\"",
+    "init": "concurrently \"nest build common\" \"nest build gateway\" \"nest build grpc\"",
     "launch": "npm run init && concurrently \"nest start gateway\" \"nest start grpc\"",
     "migrate": "npx prisma generate && npx prisma migrate dev",
     "build": "nest build",
