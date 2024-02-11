@@ -17,12 +17,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     'claim': (claim: any, toDbEntity: boolean) => {
       if (toDbEntity) {
         claim.status = ClaimStatus[claim.status];
-        claim.createdAt = TimestampConverter.fromDate(claim.createdAt);
+        claim.createdAt = TimestampConverter.toDate(claim.createdAt);
       } else {
         if (claim.status)
           claim.status = ClaimStatus[claim.status] as any;
         if (claim.createdAt)
-          claim.createdAt = TimestampConverter.toDate(claim.createdAt);
+          claim.createdAt = TimestampConverter.fromDate(claim.createdAt);
       }
       return claim;
     }
