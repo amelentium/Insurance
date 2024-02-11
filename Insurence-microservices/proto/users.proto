@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+import "claims.proto";
 import "shared.proto";
 
 package users;
@@ -9,7 +10,7 @@ service UsersService {
   rpc update (User) returns (UserResponse) {}
   rpc remove (FindUserDto) returns (UserResponse) {}
   rpc findOne (FindUserDto) returns (UserResponse) {}
-  rpc findAll (shared.Empty) returns (Users) {}
+  rpc findAll (shared.SearchFilter) returns (Users) {}
 }
 
 message User {
@@ -17,6 +18,7 @@ message User {
   string username = 2;
   string password = 3;
   bool isActive = 4;
+  repeated claims.Claim claims = 5;
 }
 
 message CreateUserDto {
@@ -33,6 +35,7 @@ message FindUserDto {
     string id = 1;
     string username = 2;
   }
+  optional bool includeRefs = 3;
 }
 
 message Users {

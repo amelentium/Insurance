@@ -18,7 +18,7 @@ export class ClaimsController implements ClaimsServiceController {
   }
   
   async findOne(findDto: FindClaimDto): Promise<ClaimResponse> {
-    const claim = await this.claimsService.findOne(findDto.id);
+    const claim = await this.claimsService.findOne(findDto);
     return { claim: claim };
   }
   

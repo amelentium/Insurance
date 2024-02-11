@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
 import { ClaimsService } from './claims.service';
 import { CreateClaimDto, FindAllClaimsFilter, UpdateClaimDto } from '@app/common';
-import { ClaimDto } from './dto/claim.dto';
-import { Observable } from 'rxjs';
+import { ClaimDto } from './dto/claims.claim.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('claims')
@@ -16,13 +15,14 @@ export class ClaimsController {
     if (!userId) {
       throw new UnauthorizedException('Invalid token.');
     }
+    
     createClaimDto.userId = userId;
-    return this.claimsService.create(createClaimDto);
+    return await this.claimsService.create(createClaimDto);
   }
 
   @Get()
-  findAll(@Query() filter: FindAllClaimsFilter): Observable<ClaimDto[]> {
-    return this.claimsService.findAll(filter);
+  async findAll(@Query() filter: FindAllClaimsFilter): Promise<ClaimDto[]> {
+    return await this.claimsService.findAll(filter);
   }
 
   @Get(':id')

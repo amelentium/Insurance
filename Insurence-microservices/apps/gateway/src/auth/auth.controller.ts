@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { UsersService } from '../users/users.service';
 import { UserLoginRequest, UserLoginResponse } from './dto/auth.dto';
+import { UserDto } from '../users/dto/users.user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,9 +17,11 @@ export class AuthController {
     if (user) {
       const jwt = await this.authService.signIn(user, loginDto.password);
       if (jwt) {
-        delete user.password;
+        const userDto = new UserDto();
+        userDto.mapFrom(user);
+
         return {
-          user: user,
+          user: userDto,
           token: jwt,
         };
       }
@@ -32,9 +35,11 @@ export class AuthController {
     if (user) {
       const jwt = await this.authService.signIn(user, loginDto.password);
       if (jwt) {
-        delete user.password;
+        const userDto = new UserDto();
+        userDto.mapFrom(user);
+
         return {
-          user: user,
+          user: userDto,
           token: jwt,
         };
       }
@@ -50,7 +55,7 @@ export class AuthController {
       throw new UnauthorizedException('Invalid token.');
     }
 
-    const user = await this.usersService.findOne({ id: userId });
+    const user = await this.usersService.findOne({ id: userId, includeRefs: true });
     if (!user) {
       throw new NotFoundException(`User not found by id ${userId}.`);
     }

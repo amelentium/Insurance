@@ -1,12 +1,12 @@
-import { User } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { UserTempDto } from '../users/dto/users.user.dto';
 
 @Injectable()
 export class AuthService {
   constructor (private jwtService: JwtService) {}
-  async signIn(user: User, password: string): Promise<string | undefined> {
+  async signIn(user: UserTempDto, password: string): Promise<string | undefined> {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return undefined;

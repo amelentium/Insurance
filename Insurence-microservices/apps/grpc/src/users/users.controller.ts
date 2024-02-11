@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, FindUserDto, User, UserResponse, Users, UsersServiceController, UsersServiceControllerMethods } from '@app/common';
+import { CreateUserDto, FindUserDto, SearchFilter, User, UserResponse, Users, UsersServiceController, UsersServiceControllerMethods } from '@app/common';
 
 @Controller()
 @UsersServiceControllerMethods()
@@ -12,8 +12,8 @@ export class UsersController implements UsersServiceController {
     return { user: user };
   }
 
-  async findAll(): Promise<Users> {
-    const users = await this.usersService.findAll();
+  async findAll(filter: SearchFilter): Promise<Users> {
+    const users = await this.usersService.findAll(filter);
     return { users: users };
   }
 

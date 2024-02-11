@@ -2,9 +2,10 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import { Timestamp } from "./timestamp";
+import { SearchFilter } from "./shared";
 import { User } from "./users";
 
-export const clainsProtobufPackage = "claims";
+export const claimsProtobufPackage = "claims";
 
 export enum ClaimStatus {
   OPENED = 0,
@@ -18,7 +19,8 @@ export interface Claim {
   description: string;
   status: ClaimStatus;
   createdAt: Timestamp | undefined;
-  user: User | undefined;
+  userId: string | undefined;
+  user?: User | undefined;
 }
 
 export interface CreateClaimDto {
@@ -38,12 +40,14 @@ export interface ClaimResponse {
   claim?: Claim | undefined;
 }
 
-export interface FindAllClaimsFilter {
-  userId?: string | undefined;
-}
-
 export interface FindClaimDto {
   id: string;
+  includeRefs?: boolean | undefined;
+}
+
+export interface FindAllClaimsFilter {
+  userId?: string | undefined;
+  searchFilter?: SearchFilter | undefined;
 }
 
 export interface Claims {

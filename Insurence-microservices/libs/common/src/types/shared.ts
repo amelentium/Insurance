@@ -4,4 +4,14 @@ export const sharedProtobufPackage = "shared";
 export interface Empty {
 }
 
-export const shared_PACKAGE_NAME = "shared";
+export interface PaginationFilter {
+  page: number;
+  size: number;
+}
+
+export interface SearchFilter {
+  paging?: PaginationFilter | undefined;
+  includeRefs?: boolean | undefined;
+}
+
+export const SHARED_PACKAGE_NAME = "shared";

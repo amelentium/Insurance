@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+import "shared.proto";
 import "users.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -11,7 +12,6 @@ service ClaimsService {
   rpc remove (FindClaimDto) returns (ClaimResponse) {}
   rpc findOne (FindClaimDto) returns (ClaimResponse) {}
   rpc findAll (FindAllClaimsFilter) returns (Claims) {}
-  rpc findByUserId (FindAllClaimsFilter) returns (Claims) {}
 }
 
 message Claim {
@@ -20,7 +20,8 @@ message Claim {
   string description = 3;
   ClaimStatus status = 4;
   google.protobuf.Timestamp createdAt = 5;
-  users.User user = 6;
+  optional string userId = 6;
+  optional users.User user = 7;
 }
 
 enum ClaimStatus {
@@ -48,10 +49,12 @@ message ClaimResponse {
 
 message FindClaimDto {
   string id = 1;
+  optional bool includeRefs = 2;
 }
 
 message FindAllClaimsFilter {
   optional string userId = 1;
+  optional shared.SearchFilter searchFilter = 2;
 }
 
 message Claims {

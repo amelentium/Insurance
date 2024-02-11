@@ -1,4 +1,4 @@
-import { Claim, CreateClaimDto, UpdateClaimDto, TimestampConverter, ClaimStatus, FindAllClaimsFilter} from '@app/common';
+import { Claim, CreateClaimDto, UpdateClaimDto, FindAllClaimsFilter, FindClaimDto} from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 
@@ -14,10 +14,9 @@ export class ClaimsService {
           description: createDto.description,
           userId: createDto.userId,
         },
-        include: { user: true },
       });
 
-      return this.mapClaim(claim);
+      return this.prisma.mapEntity('claim', claim);
     } catch {
       return undefined;
     }
@@ -25,23 +24,29 @@ export class ClaimsService {
 
   async findAll(filter: FindAllClaimsFilter): Promise<Claim[]> {
     try {
+      const paging = filter.searchFilter?.paging;
+      const page = paging?.page || 1;
+      const size = paging?.size || 25;
+
       const claims = await this.prisma.claim.findMany({
+        take: size,
+        skip: (page - 1) * size,
         where: { userId: filter.userId },
-        include: { user: true },
+        include: { user: filter.searchFilter?.includeRefs || false },
       });
-      return claims.map(claim => this.mapClaim(claim));
+      return claims.map(claim => this.prisma.mapEntity('claim', claim));
     } catch {
       return undefined;
     }
   }
 
-  async findOne(id: string): Promise<Claim | undefined> {
+  async findOne(findDto: FindClaimDto): Promise<Claim | undefined> {
     try {
       const claim = await this.prisma.claim.findMany({
-        where: { id: id },
-        include: { user: true },
+        where: { id: findDto.id },
+        include: { user: findDto.includeRefs || false },
       });
-      return this.mapClaim(claim);
+      return this.prisma.mapEntity('claim', claim);
     } catch {
       return undefined;
     }
@@ -51,10 +56,10 @@ export class ClaimsService {
     try {
       const claim = await this.prisma.claim.update({
         where: { id: updateDto.id },
-        data: { ...this.mapClaim(updateDto, false) },
+        data: { ...this.prisma.mapEntity('claim', updateDto, true) },
         include: { user: true },
       });
-      return this.mapClaim(claim);
+      return this.prisma.mapEntity('claim', claim);
     } catch (ex) {
       return undefined;
     }
@@ -66,23 +71,9 @@ export class ClaimsService {
         where: { id: id },
         include: { user: true },
       });
-      return this.mapClaim(claim);
+      return this.prisma.mapEntity('claim', claim);
     } catch {
       return undefined;
-    }
-  }
-
-  private mapClaim(claim: any, toClaim: boolean = true): Claim | any {
-    if (toClaim) {
-      claim.status = ClaimStatus[claim.status];
-      claim.createdAt = TimestampConverter.fromDate(claim.createdAt);
-      return claim as Claim;
-    } else {
-      if (claim.status)
-        claim.status = ClaimStatus[claim.status] as any;
-      if (claim.createdAt)
-        claim.createdAt = TimestampConverter.toDate(claim.createdAt);
-      return claim;
     }
   }
 }

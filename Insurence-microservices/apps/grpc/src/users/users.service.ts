@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, FindUserDto, User } from '@app/common';
+import { CreateUserDto, FindUserDto, SearchFilter, User } from '@app/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 
 @Injectable()
@@ -14,9 +14,17 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(filter: SearchFilter): Promise<User[]> {
     try {
-      return await this.prisma.user.findMany();
+      const page = filter?.paging?.page || 1;
+      const size = filter?.paging?.size || 25;
+
+      const users = await this.prisma.user.findMany({
+        take: size,
+        skip: (page - 1) * size,
+        include: { claims: filter.includeRefs || false },
+      });
+      return users.map(user => this.prisma.mapEntity('user', user));
     } catch {
       return [];
     }
@@ -24,12 +32,14 @@ export class UsersService {
 
   async findOne(findDto: FindUserDto): Promise<User | undefined> {
     try {
-      return await this.prisma.user.findUnique({ 
+      const user = await this.prisma.user.findUnique({ 
         where: { 
           id: findDto.id,
           username: findDto.username,
-        } 
+        },
+        include: { claims: findDto.includeRefs || false },
       });
+      return this.prisma.mapEntity('user', user);
     } catch {
       return undefined;
     }
@@ -39,7 +49,7 @@ export class UsersService {
     try {
       return await this.prisma.user.update({
         where: { id: updateDto.id },
-        data: updateDto,
+        data: this.prisma.mapEntity('user', updateDto, true),
       });
     } catch {
       return undefined;

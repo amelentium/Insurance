@@ -1,7 +1,8 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
-import { Empty } from "./shared";
+import { SearchFilter } from "./shared";
+import { Claim } from "./claims";
 
 export const usersProtobufPackage = "users";
 
@@ -10,6 +11,7 @@ export interface User {
   username: string;
   password: string;
   isActive: boolean;
+  claims?: Claim[];
 }
 
 export interface CreateUserDto {
@@ -24,6 +26,7 @@ export interface UserResponse {
 export interface FindUserDto {
   id?: string | undefined;
   username?: string | undefined;
+  includeRefs?: boolean | undefined;
 }
 
 export interface Users {
@@ -41,7 +44,7 @@ export interface UsersServiceClient {
 
   findOne(request: FindUserDto): Observable<UserResponse>;
 
-  findAll(request: Empty): Observable<Users>;
+  findAll(request: SearchFilter): Observable<Users>;
 }
 
 export interface UsersServiceController {
@@ -53,7 +56,7 @@ export interface UsersServiceController {
 
   findOne(request: FindUserDto): Promise<UserResponse> | Observable<UserResponse> | UserResponse;
 
-  findAll(request: Empty): Promise<Users> | Observable<Users> | Users;
+  findAll(request: SearchFilter): Promise<Users> | Observable<Users> | Users;
 }
 
 export function UsersServiceControllerMethods() {

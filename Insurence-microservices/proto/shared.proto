@@ -3,3 +3,13 @@ syntax = "proto3";
 package shared;
 
 message Empty {}
+
+message PaginationFilter {
+  int32 page = 1;
+  int32 size = 2;
+}
+
+message SearchFilter {
+  optional PaginationFilter paging = 1;
+  optional bool includeRefs = 2;
+}
