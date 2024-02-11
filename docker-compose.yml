@@ -2,7 +2,7 @@ services:
   gateway:
     container_name: gateway
     build:
-      context: ./Insurance-microservices
+      context: ./Insurance-microservices/
       dockerfile: Dockerfile-gateway
     env_file:
       - .env
