@@ -1,4 +1,4 @@
-import { Claim, ClaimStatus, TimestampConverter, User } from '@app/common';
+import { ClaimStatus, TimestampConverter } from '@app/common';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 

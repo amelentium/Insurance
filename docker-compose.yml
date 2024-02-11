@@ -2,7 +2,7 @@ services:
   gateway:
     container_name: gateway
     build:
-      context: ./Insurence-microservices
+      context: ./Insurance-microservices
       dockerfile: Dockerfile-gateway
     env_file:
       - .env
@@ -14,7 +14,7 @@ services:
   grpc:
     container_name: grpc
     build:
-      context: ./Insurence-microservices
+      context: ./Insurance-microservices
       dockerfile: Dockerfile-grpc
     env_file:
       - .env

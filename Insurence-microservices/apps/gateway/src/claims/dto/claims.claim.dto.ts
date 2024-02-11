@@ -1,4 +1,4 @@
-import { Claim, ClaimStatus, TimestampConverter, User } from "@app/common";
+import { Claim, ClaimStatus, TimestampConverter } from "@app/common";
 import { DtoFrom } from "@app/common";
 import { UserTempDto } from "../../users/dto/users.user.dto";
 

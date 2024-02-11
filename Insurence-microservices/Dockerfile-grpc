@@ -20,7 +20,7 @@ COPY --chown=node:node . .
 RUN npm run build common
 
 # Initialize a @prisma/client
-RUN npx prisma generate
+RUN npx prisma migrate
 
 # Start the server using the production build
 CMD npm run start grpc
