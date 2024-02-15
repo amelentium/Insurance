@@ -1,4 +1,4 @@
-import { Claim, CreateClaimDto, UpdateClaimDto, FindAllClaimsFilter, FindClaimDto} from '@app/common';
+import { Claim, CreateClaimDto, UpdateClaimDto, FindAllClaimsFilter, FindClaimDto, Entity} from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 
@@ -16,7 +16,7 @@ export class ClaimsService {
         },
       });
 
-      return this.prisma.mapEntity('claim', claim);
+      return this.prisma.mapEntity(Entity.Claim, claim);
     } catch {
       return undefined;
     }
@@ -34,7 +34,7 @@ export class ClaimsService {
         where: { userId: filter.userId },
         include: { user: filter.searchFilter?.includeRefs || false },
       });
-      return claims.map(claim => this.prisma.mapEntity('claim', claim));
+      return claims.map(claim => this.prisma.mapEntity(Entity.Claim, claim));
     } catch {
       return undefined;
     }
@@ -46,7 +46,7 @@ export class ClaimsService {
         where: { id: findDto.id },
         include: { user: findDto.includeRefs || false },
       });
-      return this.prisma.mapEntity('claim', claim);
+      return this.prisma.mapEntity(Entity.Claim, claim);
     } catch {
       return undefined;
     }
@@ -56,10 +56,10 @@ export class ClaimsService {
     try {
       const claim = await this.prisma.claim.update({
         where: { id: updateDto.id },
-        data: { ...this.prisma.mapEntity('claim', updateDto, true) },
+        data: { ...this.prisma.mapEntity(Entity.Claim, updateDto, true) },
         include: { user: true },
       });
-      return this.prisma.mapEntity('claim', claim);
+      return this.prisma.mapEntity(Entity.Claim, claim);
     } catch (ex) {
       return undefined;
     }
@@ -71,7 +71,7 @@ export class ClaimsService {
         where: { id: id },
         include: { user: true },
       });
-      return this.prisma.mapEntity('claim', claim);
+      return this.prisma.mapEntity(Entity.Claim, claim);
     } catch {
       return undefined;
     }

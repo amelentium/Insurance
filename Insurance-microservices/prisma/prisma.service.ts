@@ -1,4 +1,4 @@
-import { ClaimStatus, TimestampConverter } from '@app/common';
+import { ClaimStatus, Entity, TimestampConverter } from '@app/common';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
@@ -8,13 +8,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$connect();
   }
 
-  maps = {
-    'user': (user: any, toDbEntity: boolean) => {
+  maps = new Map<string, Function>([
+    [Entity.User, (user: any, toDbEntity: boolean) => {
       if (user.claims)
         user.claims = user.claims.map(claim => this.mapEntity('claim', claim, toDbEntity));
-      return user;
-    },
-    'claim': (claim: any, toDbEntity: boolean) => {
+      return user
+    }],
+    [Entity.Claim, (claim: any, toDbEntity: boolean) => {
       if (toDbEntity) {
         claim.status = ClaimStatus[claim.status];
         claim.createdAt = TimestampConverter.toDate(claim.createdAt);
@@ -25,11 +25,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
           claim.createdAt = TimestampConverter.fromDate(claim.createdAt);
       }
       return claim;
-    }
-  };
+    }],
+  ]);
 
   mapEntity(mapName: string, entity: any, toDbEntity: boolean = false): any {
-    const mapFunction = this.maps[mapName];
+    const mapFunction = this.maps.get(mapName);
     return mapFunction(entity, toDbEntity);
   }
 }

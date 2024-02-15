@@ -4,3 +4,8 @@ export const claimsProto = 'claims.proto';
 
 export const jwtSecret = process.env.JWT_SECRET || 'local auth test secret';
 export const jwtExpirationHrs = Number(process.env.JWT_EXPIRATION) || 24;
+
+export class Entity {
+  static User = 'user';
+  static Claim = 'claim';
+}

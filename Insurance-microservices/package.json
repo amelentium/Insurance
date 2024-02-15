@@ -8,7 +8,7 @@
   "scripts": {
     "init": "concurrently \"nest build common\" \"nest build gateway\" \"nest build grpc\"",
     "launch": "npm run init && concurrently \"nest start gateway\" \"nest start grpc\"",
-    "migrate": "npx prisma generate && npx prisma migrate dev",
+    "migrate": "npx prisma migrate dev",
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",

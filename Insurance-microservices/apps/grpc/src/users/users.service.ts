@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, FindUserDto, SearchFilter, User } from '@app/common';
+import { CreateUserDto, Entity, FindUserDto, SearchFilter, User } from '@app/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class UsersService {
         skip: (page - 1) * size,
         include: { claims: filter.includeRefs || false },
       });
-      return users.map(user => this.prisma.mapEntity('user', user));
+      return users.map(user => this.prisma.mapEntity(Entity.User, user));
     } catch {
       return [];
     }
@@ -39,7 +39,7 @@ export class UsersService {
         },
         include: { claims: findDto.includeRefs || false },
       });
-      return this.prisma.mapEntity('user', user);
+      return this.prisma.mapEntity(Entity.User, user);
     } catch {
       return undefined;
     }
@@ -49,7 +49,7 @@ export class UsersService {
     try {
       return await this.prisma.user.update({
         where: { id: updateDto.id },
-        data: this.prisma.mapEntity('user', updateDto, true),
+        data: this.prisma.mapEntity(Entity.User, updateDto, true),
       });
     } catch {
       return undefined;
